@@ -1,0 +1,22 @@
+# == Schema Information
+#
+# Table name: mst_exchanges
+#
+#  id                    :integer          not null, primary key
+#  name                  :string(255)      not null
+#  url                   :string(255)      not null
+#  max_maker_spread_rate :float(24)        default(0.0), not null
+#  max_taker_spread_rate :float(24)        default(0.0), not null
+#
+
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+# This model initially had no columns defined. If you add columns to the
+# model remove the '{}' from the fixture names and add the columns immediately
+# below each fixture, per the syntax in the comments below
+#
+one: {}
+# column: value
+#
+two: {}
+# column: value

@@ -1,0 +1,24 @@
+# == Schema Information
+#
+# Table name: mst_currency_pairs
+#
+#  id                :integer          not null, primary key
+#  mst_exchange_id   :integer
+#  from_currency_id  :integer          not null
+#  to_currency_id    :integer          not null
+#  name              :string(255)      not null
+#  maker_spread_rate :float(24)        default(0.0), not null
+#  taker_spread_rate :float(24)        default(0.0), not null
+#
+
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+# This model initially had no columns defined. If you add columns to the
+# model remove the '{}' from the fixture names and add the columns immediately
+# below each fixture, per the syntax in the comments below
+#
+one: {}
+# column: value
+#
+two: {}
+# column: value
