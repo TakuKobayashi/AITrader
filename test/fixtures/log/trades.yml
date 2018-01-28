@@ -13,8 +13,8 @@
 #
 # Indexes
 #
-#  index_log_trades_on_tid          (tid)
 #  index_log_trades_on_traded_time  (traded_time)
+#  log_trades_tid_pair_uniq_index   (tid,mst_exchange_id,mst_currency_pair_id) UNIQUE
 #
 
 # Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html

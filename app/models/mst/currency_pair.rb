@@ -9,7 +9,7 @@
 #  cpid              :string(255)
 #  name              :string(255)      not null
 #  pair_name         :string(255)
-#  is_token          :boolean          default(FALSE), not null
+#  is_token          :boolean          default(TRUE), not null
 #  maker_spread_rate :float(24)        default(0.0), not null
 #  taker_spread_rate :float(24)        default(0.0), not null
 #  description       :text(65535)
