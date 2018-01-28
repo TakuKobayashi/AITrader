@@ -29,6 +29,7 @@ class Mst::Zaif < Mst::Exchange
           to_currency_id: currency_name_hash[to_name].id,
           name: cpjson["name"],
           pair_name: cpjson["currency_pair"],
+          is_token: cpjson["is_token"],
           description: cpjson["description"]
         )
       end

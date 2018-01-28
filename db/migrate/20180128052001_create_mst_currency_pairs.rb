@@ -7,6 +7,7 @@ class CreateMstCurrencyPairs < ActiveRecord::Migration[5.1]
       t.string :cpid
       t.string :name, null: false
       t.string :pair_name
+      t.boolean :is_token, null: false, default: true
       t.float :maker_spread_rate, null: false, default: 0
       t.float :taker_spread_rate, null: false, default: 0
       t.text :description
