@@ -5,4 +5,10 @@
 #
 #   movies = Movie.create([{ name: 'Star Wars' }, { name: 'Lord of the Rings' }])
 #   Character.create(name: 'Luke', movie: movies.first)
-AdminUser.create!(email: 'admin@example.com', password: 'password', password_confirmation: 'password') if Rails.env.development?
+if Rails.env.development?
+  AdminUser.connection.execute("TRUNCATE TABLE #{AdminUser.table_name}")
+  AdminUser.create!(email: 'admin@example.com', password: 'password', password_confirmation: 'password') if Rails.env.development?
+end
+zaif = Mst::Zaif.find_or_create_by!(name: "Zaif", url: "https://zaif.jp/")
+zaif.update!(max_maker_spread_rate: -0.05, max_taker_spread_rate: -0.01)
+zaif.setup!
