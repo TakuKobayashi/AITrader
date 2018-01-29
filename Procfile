@@ -1,0 +1,1 @@
+tracer: bundle exec rails runner AiBrain.trace!
