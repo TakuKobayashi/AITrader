@@ -3,10 +3,13 @@ module AiBrain
     currency_name_pairs = Mst::CurrencyPair.where(is_token: false).select{|pair| pair.pair_name.present? }.index_by(&:pair_name)
     EM.run do
       currency_name_pairs.each do |pair_name, currency_pair|
-        ws = Faye::WebSocket::Client.new('wss://ws.zaif.jp/stream?currency_pair=' + currency_pair.pair_name)
+        ws_url = 'wss://ws.zaif.jp/stream?currency_pair=' + currency_pair.pair_name
+        next if TraceConnection.where(state: [TraceConnection.states[:standby], TraceConnection.states[:opening]], url: ws_url).exists?
+        trade_connection = TraceConnection.create!(state: :standby, url: ws_url)
+        ws = Faye::WebSocket::Client.new(ws_url)
 
         ws.on :open do |event|
-          p "open"
+          trade_connection.update!(opened_time: Time.current, state: :opening)
         end
 
         ws.on :message do |event|
@@ -15,7 +18,7 @@ module AiBrain
         end
 
         ws.on :close do |event|
-          p "close #{event.code} #{event.reason}"
+          trade_connection.update!(closed_time: Time.current, state: :closed, closed_reason: [event.code, event.reason].join(" "))
           ws = nil
         end
       end

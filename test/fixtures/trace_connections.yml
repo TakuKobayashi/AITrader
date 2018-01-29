@@ -1,0 +1,29 @@
+# == Schema Information
+#
+# Table name: trace_connections
+#
+#  id            :integer          not null, primary key
+#  state         :integer          default("standby"), not null
+#  url           :string(255)      not null
+#  opened_time   :datetime
+#  closed_time   :datetime
+#  closed_reason :text(65535)
+#
+# Indexes
+#
+#  index_trace_connections_on_closed_time  (closed_time)
+#  index_trace_connections_on_opened_time  (opened_time)
+#  index_trace_connections_on_url          (url)
+#
+
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+# This model initially had no columns defined. If you add columns to the
+# model remove the '{}' from the fixture names and add the columns immediately
+# below each fixture, per the syntax in the comments below
+#
+one: {}
+# column: value
+#
+two: {}
+# column: value
