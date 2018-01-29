@@ -4,17 +4,18 @@ module AiBrain
     EM.run do
       currency_name_pairs.each do |pair_name, currency_pair|
         ws_url = 'wss://ws.zaif.jp/stream?currency_pair=' + currency_pair.pair_name
-        next if TraceConnection.where(state: [TraceConnection.states[:standby], TraceConnection.states[:opening]], url: ws_url).exists?
-        trade_connection = TraceConnection.create!(state: :standby, url: ws_url)
+        next if TraceConnection.where(state: [TraceConnection.states[:standby], TraceConnection.states[:opening]], url: ws_url, mst_currency_pair_id: currency_pair.id).exists?
+        trade_connection = TraceConnection.create!(state: :standby, url: ws_url, mst_currency_pair_id: currency_pair.id)
         ws = Faye::WebSocket::Client.new(ws_url)
 
         ws.on :open do |event|
           trade_connection.update!(opened_time: Time.current, state: :opening)
+          Batch.complement_trade_log!
         end
 
         ws.on :message do |event|
           trade_json = JSON.parse(event.data)
-          self.input!(currency_name_pairs[trade_json["currency_pair"]], trade_json)
+          self.input!(currency_name_pairs[trade_json["currency_pair"]], trade_json["trades"])
         end
 
         ws.on :close do |event|
@@ -25,8 +26,8 @@ module AiBrain
     end
   end
 
-  def self.input!(currency_pair, json)
-    log_trades = json["trades"].map do |trade_hash|
+  def self.input!(currency_pair, trades_json_array)
+    log_trades = trades_json_array.map do |trade_hash|
       Log::Trade.new(
         mst_exchange_id: currency_pair.mst_exchange_id,
         mst_currency_pair_id: currency_pair.id,
