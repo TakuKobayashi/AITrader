@@ -35,4 +35,22 @@ class Mst::Zaif < Mst::Exchange
       end
     end
   end
+
+  def import_price_ticker!
+    mst_currency_pairs = self.currency_pairs.where(is_token: false)
+    price_tickers = mst_currency_pairs.map do |currency_pair|
+      ticker_json = RequestParser.request_and_parse_json(url: "https://api.zaif.jp/api/1/ticker/" + currency_pair.pair_name)
+      PriceTicker.create!(
+        mst_exchange_id: self.id,
+        mst_currency_pair_id: currency_pair.id,
+        high_price: ticker_json["high"],
+        low_price: ticker_json["low"],
+        last_price: ticker_json["last"],
+        vwap: ticker_json["vwap"],
+        sign_bid: ticker_json["bid"],
+        sign_ask: ticker_json["ask"],
+      )
+    end
+    return price_tickers
+  end
 end

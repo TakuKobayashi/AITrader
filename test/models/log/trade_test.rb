@@ -6,7 +6,7 @@
 #  mst_exchange_id      :integer          not null
 #  mst_currency_pair_id :integer          not null
 #  tid                  :string(255)      not null
-#  tarde_method         :integer          default(0), not null
+#  trade_method         :string(255)      not null
 #  price                :float(24)        default(0.0), not null
 #  amount               :float(24)        default(0.0), not null
 #  traded_time          :datetime         not null
