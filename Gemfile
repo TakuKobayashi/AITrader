@@ -51,7 +51,9 @@ gem 'addressable'
 gem 'puma_worker_killer'
 
 gem 'zaif'
-gem "faye-websocket"
+gem 'faye-websocket'
+
+gem 'foreman'
 
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
