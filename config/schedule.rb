@@ -13,8 +13,10 @@
 #   rake "some:great:rake:task"
 # end
 #
-# every 4.days do
-#   runner "AnotherModel.prune_old_records"
-# end
+set :output, "#{path}/log/cron.log"
+
+every 6.hours do
+  runner "Batch.import_ticker!"
+end
 
 # Learn more: http://github.com/javan/whenever
