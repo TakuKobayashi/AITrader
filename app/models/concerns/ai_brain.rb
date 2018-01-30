@@ -42,11 +42,61 @@ module AiBrain
     return log_trades
   end
 
-  def self.imagine!
+  SHORT_IMAGINE_SPAN = 30.minutes
+
+  # 短期にみた時の考察
+  def self.short_imagine
+    zaif = Mst::Zaif.first
+    pair = zaif.currency_pairs.find_by(pair_name: "xem_jpy")
+    trade_logs = []
+    (0..4).each do |i|
+      trade_logs << Log::Trade.where(mst_exchange_id: zaif.id, mst_currency_pair_id: pair.id).where("traded_time > ?", (SHORT_IMAGINE_SPAN * i).ago).first
+    end
+    judge(trade_logs: trade_logs)
+  end
+
+  LONG_IMAGINE_SPAN = 12.hour
+
+  # ある程度長期的にみた時の考察
+  def self.long_imagine
 
   end
 
-  def self.judge!
+  # 価格の変動率がこの値異常だと急激に変化したと見る
+  RAPIDLY_RATE = 0.01
 
+  def self.judge(trade_logs: [])
+    trade_logs.sort_by!{|tl| -tl.traded_time }
+    # 判断する際の抽選確率(0より低ければ買おうかな?, 0より高ければ売ろうかな?という指標)
+    lot_rate = 0
+    # 投資する金額の割合
+    pay_rate = 0
+    # 前と比べて上がっている
+    diff1 = trade_logs[0].price - trade_logs[1].price
+    if diff1.abs > later_log.price * RAPIDLY_RATE
+      lot_rate = 0.5
+      pay_rate = 0.5
+    end
+    if diff1 < 0
+      lot_rate = -lot_rate
+    end
+
+    diff2 = trade_logs[1].price - trade_logs[2].price
+    if diff1 < 0
+      if diff2 < 0
+      end
+    else
+      if diff2 < 0
+      end
+    end
+
+    #確率が0より低ければ買う、0より高ければ売る
+    action = nil
+    if lot_rate < 0
+      action = "bid"
+    elsif lot_rate > 0
+      action = "ask"
+    end
+    return rand < lot_rate.abs, action, pay_rate
   end
 end
