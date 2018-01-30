@@ -43,30 +43,27 @@ module AiBrain
   end
 
   SHORT_IMAGINE_SPAN = 30.minutes
-
-  # 短期にみた時の考察
-  def self.short_imagine
-    zaif = Mst::Zaif.first
-    pair = zaif.currency_pairs.find_by(pair_name: "xem_jpy")
-    trade_logs = []
-    (0..4).each do |i|
-      trade_logs << Log::Trade.where(mst_exchange_id: zaif.id, mst_currency_pair_id: pair.id).where("traded_time > ?", (SHORT_IMAGINE_SPAN * i).ago).first
-    end
-    judge(trade_logs: trade_logs)
-  end
-
   LONG_IMAGINE_SPAN = 12.hour
-
-  # ある程度長期的にみた時の考察
-  def self.long_imagine
-
-  end
-
-  # 価格の変動率がこの値異常だと急激に変化したと見る
+  SPLIT_GROUP_COUNT = 4
+  # 価格の変動率がこの値以上だと急激に変化したと見る
   RAPIDLY_RATE = 0.01
 
-  def self.judge(trade_logs: [])
-    trade_logs.sort_by!{|tl| -tl.traded_time }
+  def self.imagine!(span:)
+    zaif = Mst::Zaif.first
+    pair = zaif.currency_pairs.find_by(pair_name: "xem_jpy")
+    all_trade_logs = Log::Trade.
+      where(mst_exchange_id: zaif.id, mst_currency_pair_id: pair.id).
+      where("traded_time > ?", (span * SPLIT_GROUP_COUNT).ago).
+      order("traded_time DESC")
+    span_splits = (0..SPLIT_GROUP_COUNT).to_a.map{|i| ((i + 1) * span).ago..(i * span).ago }
+    trade_log_groups = all_trade_logs.group_by do |trade_log|
+      span_splits.find_index{|span_range| span_range.cover?(trade_log.traded_time) }
+    end
+    judge_result = self.judge(trade_log_groups: trade_log_groups)
+    self.enforce!(judge_result: judge_result)
+  end
+
+  def self.judge(trade_log_groups: {})
     # 判断する際の抽選確率(0より低ければ買おうかな?, 0より高ければ売ろうかな?という指標)
     lot_rate = 0
     # 投資する金額の割合
@@ -98,5 +95,9 @@ module AiBrain
       action = "ask"
     end
     return rand < lot_rate.abs, action, pay_rate
+  end
+
+  def self.enforce!(judge_result:)
+
   end
 end
