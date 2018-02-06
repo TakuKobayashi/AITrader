@@ -15,7 +15,12 @@ module AiBrain
 
         ws.on :message do |event|
           trade_json = JSON.parse(event.data)
-          self.input!(currency_name_pairs[trade_json["currency_pair"]], trade_json["trades"])
+          self.input!(
+            currency_pair: currency_name_pairs[trade_json["currency_pair"]],
+            trades_json_array: trade_json["trades"],
+            asks_json_array: trade_json["asks"],
+            bids_json_array: trade_json["bids"]
+          )
         end
 
         ws.on :close do |event|
@@ -26,8 +31,10 @@ module AiBrain
     end
   end
 
-  def self.input!(currency_pair, trades_json_array)
+  def self.input!(currency_pair:, trades_json_array: [], asks_json_array: [], bids_json_array: [])
     log_trades = trades_json_array.map do |trade_hash|
+      trade_time = Time.at(trade_hash["date"])
+      section_number = trade_time.strftime("%Y%m%d%H").to_i * 100 + ((trade_time.minutes / 5).to_i * 5)
       Log::Trade.new(
         mst_exchange_id: currency_pair.mst_exchange_id,
         mst_currency_pair_id: currency_pair.id,
@@ -35,11 +42,36 @@ module AiBrain
         trade_method: trade_hash["trade_type"],
         price: trade_hash["price"],
         amount: trade_hash["amount"],
-        traded_time: Time.at(trade_hash["date"])
+        section_number: section_number,
+        traded_time: trade_time
       )
     end
-    Log::Trade.import!(log_trades, on_duplicate_key_update: [:trade_method, :price, :amount, :traded_time])
-    return log_trades
+    if log_trades.present?
+      Log::Trade.import!(log_trades, on_duplicate_key_update: [:trade_method, :price, :amount, :traded_time, :section_number])
+    end
+    current_time = Time.current
+    current_section_number = current_time.strftime("%Y%m%d%H").to_i * 100 + ((current_time.minutes / 5).to_i * 5)
+    log_indicatives = asks_json_array.map do |price, amount|
+      Log::IndicativePrice.new(
+        group_number: current_time.to_i,
+        section_number: current_section_number,
+        offer_action: :ask,
+        price: price,
+        amount: amount
+      )
+    end
+    log_indicatives += bids_json_array.map do |price, amount|
+      Log::IndicativePrice.new(
+        group_number: current_time.to_i,
+        section_number: current_section_number,
+        offer_action: :bid,
+        price: price,
+        amount: amount
+      )
+    end
+    if log_indicatives.present?
+      Log::IndicativePrice.import!(log_indicatives, on_duplicate_key_update: [:group_number, :section_number, :amount, :offer_action, :amount])
+    end
   end
 
   SHORT_IMAGINE_SPAN = 30.minutes

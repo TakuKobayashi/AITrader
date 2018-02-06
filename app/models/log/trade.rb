@@ -9,12 +9,14 @@
 #  trade_method         :string(255)      not null
 #  price                :float(24)        default(0.0), not null
 #  amount               :float(24)        default(0.0), not null
+#  section_number       :integer          default(0), not null
 #  traded_time          :datetime         not null
 #
 # Indexes
 #
-#  index_log_trades_on_traded_time  (traded_time)
-#  log_trades_tid_pair_uniq_index   (tid,mst_exchange_id,mst_currency_pair_id) UNIQUE
+#  index_log_trades_on_section_number  (section_number)
+#  index_log_trades_on_traded_time     (traded_time)
+#  log_trades_tid_pair_uniq_index      (tid,mst_exchange_id,mst_currency_pair_id) UNIQUE
 #
 
 class Log::Trade < ApplicationRecord
