@@ -20,4 +20,17 @@
 #
 
 class Log::Trade < ApplicationRecord
+  SPLIT_MINUTES = 5
+
+  def section
+    return self.section_number
+  end
+
+  def section=(time)
+    self.section_number = Log::Trade.calc_section_number(time)
+  end
+
+  def self.calc_section_number(time)
+    return time.strftime("%Y%m%d%H").to_i * 100 + ((time.strftime("%M").to_i / SPLIT_MINUTES).to_i * SPLIT_MINUTES)
+  end
 end

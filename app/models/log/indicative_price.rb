@@ -23,4 +23,12 @@ class Log::IndicativePrice < ApplicationRecord
     ask: 0,
     bid: 1
   }
+
+  def section
+    return self.section_number
+  end
+
+  def section=(time)
+    self.section_number = Log::Trade.calc_section_number(time)
+  end
 end

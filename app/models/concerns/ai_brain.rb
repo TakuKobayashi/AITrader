@@ -1,5 +1,6 @@
 module AiBrain
   def self.trace!
+    #Process.daemon
     currency_name_pairs = Mst::CurrencyPair.where(is_token: false).select{|pair| pair.pair_name.present? }.index_by(&:pair_name)
     EM.run do
       currency_name_pairs.each do |pair_name, currency_pair|
@@ -34,40 +35,41 @@ module AiBrain
   def self.input!(currency_pair:, trades_json_array: [], asks_json_array: [], bids_json_array: [])
     log_trades = trades_json_array.map do |trade_hash|
       trade_time = Time.at(trade_hash["date"])
-      section_number = trade_time.strftime("%Y%m%d%H").to_i * 100 + ((trade_time.minutes / 5).to_i * 5)
-      Log::Trade.new(
+      log_trade = Log::Trade.new(
         mst_exchange_id: currency_pair.mst_exchange_id,
         mst_currency_pair_id: currency_pair.id,
         tid: trade_hash["tid"],
         trade_method: trade_hash["trade_type"],
         price: trade_hash["price"],
         amount: trade_hash["amount"],
-        section_number: section_number,
         traded_time: trade_time
       )
+      log_trade.section = trade_time
+      log_trade
     end
     if log_trades.present?
       Log::Trade.import!(log_trades, on_duplicate_key_update: [:trade_method, :price, :amount, :traded_time, :section_number])
     end
     current_time = Time.current
-    current_section_number = current_time.strftime("%Y%m%d%H").to_i * 100 + ((current_time.minutes / 5).to_i * 5)
     log_indicatives = asks_json_array.map do |price, amount|
-      Log::IndicativePrice.new(
+      log_price = Log::IndicativePrice.new(
         group_number: current_time.to_i,
-        section_number: current_section_number,
         offer_action: :ask,
         price: price,
         amount: amount
       )
+      log_price.section = current_time
+      log_price
     end
     log_indicatives += bids_json_array.map do |price, amount|
-      Log::IndicativePrice.new(
+      log_price = Log::IndicativePrice.new(
         group_number: current_time.to_i,
-        section_number: current_section_number,
         offer_action: :bid,
         price: price,
         amount: amount
       )
+      log_price.section = current_time
+      log_price
     end
     if log_indicatives.present?
       Log::IndicativePrice.import!(log_indicatives, on_duplicate_key_update: [:group_number, :section_number, :amount, :offer_action, :amount])
