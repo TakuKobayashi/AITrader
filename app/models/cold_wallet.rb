@@ -11,6 +11,6 @@
 #  updated_at      :datetime         not null
 #
 
-#ガンガン動かすお金
-class InvestmentWallet < Wallet
+#あんまり動かさないお金
+class ColdWallet < Wallet
 end
