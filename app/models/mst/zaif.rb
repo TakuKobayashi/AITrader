@@ -34,10 +34,10 @@ class Mst::Zaif < Mst::Exchange
         )
       end
     end
-    init_wallet!
+    update_wallet!
   end
 
-  def init_wallet!
+  def update_wallet!
     api = Mst::Zaif.get_zaif_api
     info_json = api.get_info
     name_currencies = Mst::Currency.where(name: info_json["funds"].keys).index_by(&:name)
