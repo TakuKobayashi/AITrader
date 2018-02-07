@@ -13,4 +13,5 @@
 class Mst::Exchange < ApplicationRecord
   has_many :currencies, class_name: 'Mst::Currency', foreign_key: :mst_exchange_id
   has_many :currency_pairs, class_name: 'Mst::CurrencyPair', foreign_key: :mst_exchange_id
+  has_many :wallets, class_name: 'Wallet', foreign_key: :mst_exchange_id
 end

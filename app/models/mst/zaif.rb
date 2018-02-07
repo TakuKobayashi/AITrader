@@ -34,6 +34,19 @@ class Mst::Zaif < Mst::Exchange
         )
       end
     end
+    init_wallet!
+  end
+
+  def init_wallet!
+    api = Mst::Zaif.get_zaif_api
+    info_json = api.get_info
+    name_currencies = Mst::Currency.where(name: info_json["funds"].keys).index_by(&:name)
+    info_json["funds"].each do |currency_name, amount|
+      hot_wallet = self.wallets.find_or_initialize_by(type: 'HotWallet', mst_currency_id: name_currencies[currency_name].id)
+      hot_wallet.update!(amount: amount.to_f / 2)
+      cold_wallet = self.wallets.find_or_initialize_by(type: 'ColdWallet', mst_currency_id: name_currencies[currency_name].id)
+      cold_wallet.update!(amount: amount.to_f / 2)
+    end
   end
 
   def import_price_ticker!
@@ -52,5 +65,11 @@ class Mst::Zaif < Mst::Exchange
       )
     end
     return price_tickers
+  end
+
+  def self.get_zaif_api
+    apiconfig = YAML.load(File.open(Rails.root.to_s + "/config/apiconfig.yml"))
+    api = Zaif::API.new(:api_key => apiconfig["zaif"]["aitrader"]["key"], :api_secret => apiconfig["zaif"]["aitrader"]["secret"])
+    return api
   end
 end
