@@ -10,7 +10,7 @@
 #  lot_result_value     :float(24)        default(0.0), not null
 #  price                :float(24)        default(0.0), not null
 #  amount               :float(24)        default(0.0), not null
-#  price_rate           :float(24)        default(0.0), not null
+#  pay_rate             :float(24)        default(0.0), not null
 #  extra_params         :text(65535)
 #  created_at           :datetime         not null
 #  updated_at           :datetime         not null

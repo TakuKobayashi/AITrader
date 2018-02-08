@@ -8,7 +8,7 @@ class CreateLogJudgeResults < ActiveRecord::Migration[5.1]
       t.float :lot_result_value, null: false, default: 0
       t.float :price, null: false, default: 0
       t.float :amount, null: false, default: 0
-      t.float :price_rate, null: false, default: 0
+      t.float :pay_rate, null: false, default: 0
       t.text :extra_params
       t.timestamps
     end

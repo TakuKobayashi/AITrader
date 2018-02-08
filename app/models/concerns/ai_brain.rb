@@ -98,11 +98,11 @@ module AiBrain
   end
 
   def self.judge(trade_log_groups: {})
-    result = {}
+    result = Log::JudgeResult.new
     # 判断する際の抽選確率(0より低ければ買おうかな?, 0より高ければ売ろうかな?という指標)
-    lot_rate = 0
+    result.lot_rate = 0
     # 投資する金額の割合
-    pay_rate = 0
+    result.pay_rate = 0
     # 前と比べて上がっている
     diff1 = trade_logs[0].price - trade_logs[1].price
     if diff1.abs > later_log.price * RAPIDLY_RATE
@@ -123,16 +123,17 @@ module AiBrain
     end
 
     #確率が0より低ければ買う、0より高ければ売る
-    action = nil
+    result.action = "nothing"
     if lot_rate < 0
-      action = "bid"
+      result.action = "bid"
     elsif lot_rate > 0
-      action = "ask"
+      result.action = "ask"
     end
-    return OpenStruct.new(result)
+    result.save!
+    return result
   end
 
   def self.enforce!(judge_result:)
-
+    return false if judge_result.nothing?
   end
 end
