@@ -31,4 +31,12 @@ class Log::IndicativePrice < ApplicationRecord
   def section=(time)
     self.section_number = Log::Trade.calc_section_number(time)
   end
+
+  # 直近の価格帯で最も人気のある価格を選択する
+  def self.last_most_popular_price(offer_action: :ask)
+    last_price = Log::IndicativePrice.where(offer_action: offer_action).last
+    last_prices = Log::IndicativePrice.where(offer_action: offer_action, group_number: last_price.group_number)
+    popular_price = last_prices.max_by{|price| price.amount }
+    return popular_price.price
+  end
 end

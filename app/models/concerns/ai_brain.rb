@@ -48,7 +48,7 @@ module AiBrain
       log_trade
     end
     if log_trades.present?
-      Log::Trade.import!(log_trades, on_duplicate_key_update: [:trade_method, :price, :amount, :traded_time, :section_number])
+      Log::Trade.import!(log_trades, on_duplicate_key_update: [:trade_method, :price, :amount])
     end
     current_time = Time.current
     log_indicatives = asks_json_array.map do |price, amount|
@@ -72,7 +72,7 @@ module AiBrain
       log_price
     end
     if log_indicatives.present?
-      Log::IndicativePrice.import!(log_indicatives, on_duplicate_key_update: [:group_number, :section_number, :amount, :offer_action, :amount])
+      Log::IndicativePrice.import!(log_indicatives, on_duplicate_key_update: [:amount, :offer_action])
     end
   end
 
