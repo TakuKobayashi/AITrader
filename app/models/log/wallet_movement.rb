@@ -17,4 +17,5 @@
 #
 
 class Log::WalletMovement < ApplicationRecord
+  belongs_to :wallet, class_name: 'Wallet', foreign_key: :wallet_id, required: false
 end

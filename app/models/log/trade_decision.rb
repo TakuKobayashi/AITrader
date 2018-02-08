@@ -24,4 +24,8 @@
 #
 
 class Log::TradeDecision < ApplicationRecord
+  belongs_to :exchange, class_name: 'Mst::Exchange', foreign_key: :mst_exchange_id, required: false
+  belongs_to :from_currency, class_name: 'Mst::Currency', foreign_key: :from_currency_id, required: false
+  belongs_to :to_currency, class_name: 'Mst::Currency', foreign_key: :to_currency_id, required: false
+  belongs_to :wallet_movement, class_name: 'Log::WalletMovement', foreign_key: :log_wallet_movement_id, required: false
 end

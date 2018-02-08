@@ -12,6 +12,10 @@
 #
 
 class Wallet < ApplicationRecord
+  belongs_to :exchange, class_name: 'Mst::Exchange', foreign_key: :mst_exchange_id, required: false
+  belongs_to :currency, class_name: 'Mst::Currency', foreign_key: :mst_currency_id, required: false
+  has_many :movements, class_name: 'Log::WalletMovement', foreign_key: :wallet_id
+
   def trade!(currency_pair:, price:, amount:, action:)
     currency_code, counter_currency_code  = currency_pair.pair_name.split("_")
     other_wallet = Wallet.find_by!(type: self.type, mst_currency_id: currency_pair.from_currency_id, mst_exchange_id: self.mst_exchange_id)
