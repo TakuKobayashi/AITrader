@@ -37,6 +37,13 @@ class Log::IndicativePrice < ApplicationRecord
     last_price = Log::IndicativePrice.where(offer_action: offer_action).last
     last_prices = Log::IndicativePrice.where(offer_action: offer_action, group_number: last_price.group_number)
     popular_price = last_prices.max_by{|price| price.amount }
-    return popular_price.price
+    return popular_price
+  end
+
+  def calc_trade_amount(price_sum:)
+    if self.price.zero?
+      return 0
+    end
+    return price_sum.to_f / self.price.to_f
   end
 end

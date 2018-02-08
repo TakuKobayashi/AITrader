@@ -98,6 +98,7 @@ module AiBrain
   end
 
   def self.judge(trade_log_groups: {})
+    result = {}
     # 判断する際の抽選確率(0より低ければ買おうかな?, 0より高ければ売ろうかな?という指標)
     lot_rate = 0
     # 投資する金額の割合
@@ -128,7 +129,7 @@ module AiBrain
     elsif lot_rate > 0
       action = "ask"
     end
-    return rand < lot_rate.abs, action, pay_rate
+    return OpenStruct.new(result)
   end
 
   def self.enforce!(judge_result:)
