@@ -56,6 +56,8 @@ class Log::SelfTradeOrder < ApplicationRecord
     unless active?
       return nil
     end
+    api = Mst::Zaif.get_zaif_api
+    json = api.cancel(self.tid)
     transaction do
       self.movements.create!(
         movement_state: :canceled,
