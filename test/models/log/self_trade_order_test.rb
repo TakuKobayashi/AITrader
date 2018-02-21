@@ -3,7 +3,7 @@
 # Table name: log_self_trade_orders
 #
 #  id              :integer          not null, primary key
-#  state           :integer          default(0), not null
+#  state           :integer          default("unknown"), not null
 #  mst_exchange_id :integer          not null
 #  tid             :string(255)      not null
 #  trade_method    :string(255)      not null

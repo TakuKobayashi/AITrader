@@ -4,7 +4,7 @@
 #
 #  id                      :integer          not null, primary key
 #  wallet_id               :integer          not null
-#  movement_state          :integer          default(0), not null
+#  movement_state          :integer          default("unknown"), not null
 #  log_self_trade_order_id :integer          not null
 #  before_amount           :float(24)        default(0.0), not null
 #  after_amount            :float(24)        default(0.0), not null

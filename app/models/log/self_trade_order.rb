@@ -3,7 +3,7 @@
 # Table name: log_self_trade_orders
 #
 #  id              :integer          not null, primary key
-#  state           :integer          default(0), not null
+#  state           :integer          default("unknown"), not null
 #  mst_exchange_id :integer          not null
 #  tid             :string(255)      not null
 #  trade_method    :string(255)      not null
@@ -30,7 +30,7 @@ class Log::SelfTradeOrder < ApplicationRecord
   enum state: {
     unknown: 0,
     active: 1,
-    traded: 2,
+    traded_part: 2,
     canceled: 3
   }
 
@@ -44,7 +44,7 @@ class Log::SelfTradeOrder < ApplicationRecord
         movement_state: :active,
         wallet_id: from_wallet.id,
         before_amount: from_wallet.amount,
-        after_amount from_wallet.amount - (self.amount * self.price),
+        after_amount: from_wallet.amount - (self.amount * self.price),
         move_amount: (self.amount * self.price)
       )
       from_wallet.update!(amount: other_wallet.amount - trade_amount)
@@ -63,7 +63,7 @@ class Log::SelfTradeOrder < ApplicationRecord
         movement_state: :canceled,
         wallet_id: from_wallet.id,
         before_amount: from_wallet.amount,
-        after_amount from_wallet.amount + (self.amount * self.price),
+        after_amount: from_wallet.amount + (self.amount * self.price),
         move_amount: (self.amount * self.price)
       )
       from_wallet.update!(amount: from_wallet.amount + (self.amount * self.price))
@@ -80,7 +80,7 @@ class Log::SelfTradeOrder < ApplicationRecord
         movement_state: :traded,
         wallet_id: to_wallet.id,
         before_amount: to_wallet.amount,
-        after_amount to_wallet.amount + self.amount,
+        after_amount: to_wallet.amount + self.amount,
         move_amount: self.amount
       )
       to_wallet.update!(amount: to_wallet.amount + self.amount)
