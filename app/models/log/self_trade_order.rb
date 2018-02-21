@@ -40,6 +40,13 @@ class Log::SelfTradeOrder < ApplicationRecord
     json = api.trade(currency_code, self.price, self.amount, self.trade_method, nil, counter_currency_code)
     order_ids = json["return"].keys
     order_ids.each do |order_id|
+      self.movements.create!(
+        movement_state: :active,
+        wallet_id: from_wallet.id,
+        before_amount: from_wallet.amount,
+        after_amount from_wallet.amount - (self.amount * self.price),
+        move_amount: (self.amount * self.price)
+      )
       from_wallet.update!(amount: other_wallet.amount - trade_amount)
       update!(tid: order_id, state: :active)
     end
