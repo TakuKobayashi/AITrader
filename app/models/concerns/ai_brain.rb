@@ -1,7 +1,11 @@
 module AiBrain
   def self.trace!
     #Process.daemon
-    currency_name_pairs = Mst::CurrencyPair.where(is_token: false).select{|pair| pair.pair_name.present? }.index_by(&:pair_name)
+    currency_pairs = Mst::CurrencyPair.where(is_token: false).select{|pair| pair.pair_name.present? }
+    return false if TraceConnection.where(state: [TraceConnection.states[:standby], TraceConnection.states[:opening]]).all? do |connection|
+      currency_pairs.any?{|pair| pair.id == connection.mst_currency_pair_id }
+    end
+    currency_name_pairs = currency_pairs.index_by(&:pair_name)
     EM.run do
       currency_name_pairs.each do |pair_name, currency_pair|
         ws_url = 'wss://ws.zaif.jp/stream?currency_pair=' + currency_pair.pair_name
@@ -76,8 +80,10 @@ module AiBrain
     end
   end
 
-  SHORT_IMAGINE_SPAN = 30.minutes
-  LONG_IMAGINE_SPAN = 12.hour
+  HEALTH_CHECK_SPAN = 15.minutes
+  IMPORT_TICKER_SPAN = 8.hours
+  SHORT_IMAGINE_SPAN = 15.minutes
+  LONG_IMAGINE_SPAN = 24.hour
   SPLIT_GROUP_COUNT = 4
   # 価格の変動率がこの値以上だと急激に変化したと見る
   RAPIDLY_RATE = 0.01

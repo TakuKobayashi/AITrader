@@ -4,6 +4,14 @@ module Batch
     zaif.import_price_ticker!
   end
 
+  def self.imagaine_routine!
+    #成立していないオーダーを取り下げる処理
+    #現在の総合利益を計算する処理
+    #反省する処理
+    #Orderを出すかどうか考える処理
+    #考えた結果Orderを出すかどうか決断する処理
+  end
+
   def self.complement_trade_log!
     opening_trade_connections = TraceConnection.opening
     id_pairs = Mst::CurrencyPair.where(id: opening_trade_connections.map(&:mst_currency_pair_id)).index_by(&:id)

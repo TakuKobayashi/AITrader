@@ -20,8 +20,9 @@
 
 class Log::IndicativePrice < ApplicationRecord
   enum offer_action: {
-    ask: 0,
-    bid: 1
+    unknown: 0,
+    ask: 1,
+    bid: 2
   }
 
   def section

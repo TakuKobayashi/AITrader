@@ -15,8 +15,14 @@
 #
 set :output, "#{path}/log/cron.log"
 
-every 6.hours do
+every AiBrain::HEALTH_CHECK_SPAN do
+  runner "AiBrain.trace!"
+end
+
+every AiBrain::IMPORT_TICKER_SPAN do
   runner "Batch.import_ticker!"
 end
 
-# Learn more: http://github.com/javan/whenever
+every AiBrain::SHORT_IMAGINE_SPAN do
+  runner "Batch.imagaine_routine!"
+end
