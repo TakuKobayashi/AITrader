@@ -36,7 +36,7 @@ class Log::SelfTradeOrder < ApplicationRecord
 
   def order!(currency_pair:)
     currency_code, counter_currency_code = currency_pair.pair_name.split("_")
-    api = Mst::Zaif.get_zaif_api
+    api = Mst::Zaif.get_api_client
     json = api.trade(currency_code, self.price, self.amount, self.trade_method, nil, counter_currency_code)
     order_ids = json["return"].keys
     order_ids.each do |order_id|
@@ -56,7 +56,7 @@ class Log::SelfTradeOrder < ApplicationRecord
     unless active?
       return nil
     end
-    api = Mst::Zaif.get_zaif_api
+    api = Mst::Zaif.get_api_client
     json = api.cancel(self.tid)
     transaction do
       self.movements.create!(

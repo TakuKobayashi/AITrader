@@ -38,7 +38,7 @@ class Mst::Zaif < Mst::Exchange
   end
 
   def update_wallet!
-    api = Mst::Zaif.get_zaif_api
+    api = Mst::Zaif.get_api_client
     info_json = api.get_info
     name_currencies = Mst::Currency.where(name: info_json["funds"].keys).index_by(&:name)
     info_json["funds"].each do |currency_name, amount|
@@ -67,9 +67,8 @@ class Mst::Zaif < Mst::Exchange
     return price_tickers
   end
 
-  def self.get_zaif_api
-    apiconfig = YAML.load(File.open(Rails.root.to_s + "/config/apiconfig.yml"))
-    api = Zaif::API.new(:api_key => apiconfig["zaif"]["aitrader"]["key"], :api_secret => apiconfig["zaif"]["aitrader"]["secret"])
+  def self.get_api_client
+    api = Zaif::API.new(:api_key => ENV.fetch('TWITTER_CONSUMER_KEY', 'ZAIF_AITRADER_KEY'), :api_secret => ENV.fetch('TWITTER_CONSUMER_KEY', 'ZAIF_AITRADER_SECRET'))
     return api
   end
 end
