@@ -3,8 +3,8 @@
 # Table name: log_judge_results
 #
 #  id                   :integer          not null, primary key
-#  action               :integer          default("nothing"), not null
-#  result_action        :integer          default(0), not null
+#  action               :integer          default("unknown"), not null
+#  result_chain         :integer          default(0), not null
 #  mst_currency_pair_id :integer          not null
 #  lot_rate             :float(24)        default(0.0), not null
 #  lot_result_value     :float(24)        default(0.0), not null

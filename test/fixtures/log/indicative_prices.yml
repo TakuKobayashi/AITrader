@@ -4,7 +4,7 @@
 #
 #  id             :integer          not null, primary key
 #  group_number   :integer          default(0), not null
-#  offer_action   :integer          default("ask"), not null
+#  offer_action   :integer          default("unknown"), not null
 #  price          :float(24)        default(0.0), not null
 #  amount         :float(24)        default(0.0), not null
 #  section_number :integer          default(0), not null

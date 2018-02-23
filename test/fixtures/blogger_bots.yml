@@ -1,0 +1,36 @@
+# == Schema Information
+#
+# Table name: blogger_bots
+#
+#  id                     :integer          not null, primary key
+#  blogger_id             :string(255)      not null
+#  from_type              :string(255)
+#  from_id                :integer
+#  title                  :string(255)      not null
+#  body                   :text(65535)      not null
+#  score                  :float(24)        not null
+#  investigate_start_date :integer          not null
+#  investigate_end_date   :integer          not null
+#  published_at           :datetime         not null
+#  input_body_resources   :text(65535)      not null
+#  options                :text(65535)
+#
+# Indexes
+#
+#  blogger_bots_investigate_range_index         (investigate_start_date,investigate_end_date)
+#  index_blogger_bots_on_blogger_id             (blogger_id)
+#  index_blogger_bots_on_from_type_and_from_id  (from_type,from_id)
+#  index_blogger_bots_on_score                  (score)
+#
+
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+# This model initially had no columns defined. If you add columns to the
+# model remove the '{}' from the fixture names and add the columns immediately
+# below each fixture, per the syntax in the comments below
+#
+one: {}
+# column: value
+#
+two: {}
+# column: value
