@@ -48,6 +48,8 @@ gem 'activeadmin', git: 'https://github.com/activeadmin/activeadmin'
 gem 'inherited_resources', git: 'https://github.com/activeadmin/inherited_resources'
 gem 'addressable'
 
+gem 'google-api-client', '~> 0.11'
+
 gem 'puma_worker_killer'
 
 gem 'zaif'

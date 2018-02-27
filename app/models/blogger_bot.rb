@@ -22,10 +22,24 @@
 #  index_blogger_bots_on_from_type_and_from_id  (from_type,from_id)
 #  index_blogger_bots_on_score                  (score)
 #
+require 'google/apis/blogger_v3'
 
 class BloggerBot < ApplicationRecord
   belongs_to :from, polymorphic: true, required: false
 
   serialize :input_body_resources, JSON
   serialize :options, JSON
+
+  BLOGGER_BLOG_URL = "http://aivirtualtrader.blogspot.jp/"
+
+  def self.post_blog!
+    blogger_client = self.google_blogger_client
+    blog = blogger_client.get_blog_by_url(BLOGGER_BLOG_URL)
+  end
+
+  def self.google_blogger_client
+    service = Google::Apis::BloggerV3::BloggerService.new
+    service.authorization = GoogleOauth2Client.oauth2_client(refresh_token: ENV.fetch("GOOGLE_OAUTH_BOT_BLOGGER_REFRESH_TOKEN", ""))
+    return service
+  end
 end
