@@ -33,6 +33,7 @@ class BloggerBot < ApplicationRecord
   BLOGGER_BLOG_URL = "http://aivirtualtrader.blogspot.jp/"
 
   def self.post_blog!
+    blog_html = ActionView::Base.new(Rails.root.join('app', 'views')).render(template: 'blog/format.html.erb', format: 'html', locals: { price: 100 })
     blogger_client = self.google_blogger_client
     blog = blogger_client.get_blog_by_url(BLOGGER_BLOG_URL)
   end
