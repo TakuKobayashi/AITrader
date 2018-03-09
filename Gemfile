@@ -55,6 +55,7 @@ gem 'puma_worker_killer'
 gem 'zaif'
 gem 'faye-websocket'
 gem 'foreman'
+gem 'xml-simple'
 
 gem 'dotenv-rails', require: 'dotenv/rails-now'
 
